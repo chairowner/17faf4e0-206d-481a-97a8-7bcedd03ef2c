@@ -1,11 +1,13 @@
+import classNames from 'classnames';
 import s from './Nav.module.scss';
 
+const selectedTitle: string = 'СМР';
 const titles: string[] = [
   'По проекту',
   'Объекты',
   'РД',
   'МТО',
-  'СМР',
+  selectedTitle,
   'График',
   'МиМ',
   'Рабочие',
@@ -22,7 +24,7 @@ const Nav = () => {
   return (
     <nav className={s.nav}>
       {titles.map((title, index) => (
-        <div className={s.item} key={index}>
+        <div className={classNames(s.item, title === selectedTitle && s.selected)} key={index}>
           <img src="/icons/project-item.svg" alt="project-item" />
           <span>{title}</span>
         </div>

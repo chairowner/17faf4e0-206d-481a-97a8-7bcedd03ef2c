@@ -39,7 +39,7 @@ module.exports = () => {
       proxy: [
         {
           context: ['/api'],
-          target: 'http://185.244.172.108:8081/v1/outlay-rows/entity',
+          target: 'http://185.244.172.108:8081/v1/outlay-rows/entity/150601/row',
           pathRewrite: { '^/api': '' },
         },
       ],

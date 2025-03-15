@@ -2,6 +2,7 @@
   background-color: #27272a;
   height: 100%;
   width: 240px;
+  overflow: auto;
 
   .item {
     display: flex;
@@ -15,9 +16,7 @@
       top: 1.5px;
     }
 
-    &:focus,
-    &:hover,
-    &:active {
+    &.selected {
       background-color: #a1a1aa;
     }
   }
