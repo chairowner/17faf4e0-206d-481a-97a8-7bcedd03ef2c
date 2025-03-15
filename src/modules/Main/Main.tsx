@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { ListItemType, printList, titleItems } from '../../components/ListItem';
 import s from './Main.module.scss';
 
@@ -8,20 +8,10 @@ const Main: FC = () => {
 
   const changeLevelHovered = (state: boolean): void => setLevelHovered(state);
 
-  const levelFieldHoverHandler = () => {
-    console.log('checkHover');
-    if (false) changeLevelHovered(true);
-  };
-
   useEffect(() => {
     fetch('/api/list')
       .then((res) => res.json())
       .then((json) => setList(json));
-
-    document.addEventListener('mouseover', levelFieldHoverHandler);
-    return () => {
-      document.removeEventListener('mouseover', levelFieldHoverHandler);
-    };
   }, []);
 
   return (

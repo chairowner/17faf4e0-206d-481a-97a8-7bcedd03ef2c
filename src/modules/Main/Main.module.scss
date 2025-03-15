@@ -3,12 +3,22 @@
   flex: 1;
   padding: 0 10px;
 
+  .table,
+  tr,
+  td,
+  th {
+    border-collapse: collapse;
+  }
+
+  td {
+    border-top: 1px solid #414144;
+  }
+
   .table {
     width: 100%;
 
     th {
       color: #a1a1aa;
-      border-top: 1px solid #414144;
     }
 
     th,
@@ -25,7 +35,9 @@
 
     tbody {
       tr {
-        border-top: 1px solid #414144;
+        td:nth-child(1) {
+          width: 110px;
+        }
       }
     }
   }

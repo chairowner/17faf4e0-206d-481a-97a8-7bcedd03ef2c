@@ -4,11 +4,33 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 3px 7px 3px 4px;
 
-  &.active {
+  &.hovered {
     border-radius: 6px;
-    // padding: 3px 7px 3px 4px;
     background-color: #414144;
+
+    .item {
+      &.delete {
+        display: block;
+      }
+    }
+
+    .hasChild {
+      &:not(.first) {
+        &::before {
+          height: 59px;
+        }
+      }
+
+      &::before {
+        height: 44px;
+      }
+
+      &::after {
+        width: 4px;
+      }
+    }
   }
 
   .item {
@@ -16,13 +38,16 @@
     img {
       display: block;
     }
+
+    &.delete {
+      display: none;
+    }
   }
 
   .hasChild {
-    z-index: -1;
     position: absolute;
     bottom: 50%;
-    left: -8px;
+    left: -4px;
 
     &:not(.first) {
       &::before {
@@ -38,7 +63,7 @@
     }
 
     &::before {
-      height: 55px;
+      height: 51px;
       width: 1px;
     }
 

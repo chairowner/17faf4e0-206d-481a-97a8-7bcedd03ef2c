@@ -1,7 +1,7 @@
 import { FC, Fragment } from 'react';
-import s from './ListItem.module.scss';
-import { ListItemType, TitleItem } from './ListItem.types';
 import classNames from 'classnames';
+import { ListItemType, TitleItem } from './ListItem.types';
+import s from './ListItem.module.scss';
 
 export const titleItems: TitleItem[] = [
   { key: 'level', title: 'Уровень' },
@@ -72,12 +72,17 @@ const ListItem: FC<IListItemProps> = ({
 
           /* level */
           return (
-            <td key={key} style={level > 0 ? { paddingLeft: `${level * 32}px` } : {}}>
-              <div className={s.level}>
-                <div className={s.item}>
+            <td
+              key={key}
+              onMouseOver={() => changeLevelHovered(true)}
+              onMouseLeave={() => changeLevelHovered(false)}
+              style={level > 0 ? { paddingLeft: `${level * 32}px` } : {}}
+            >
+              <div className={classNames(s.level, levelHovered && s.hovered)}>
+                <div className={classNames(s.item, s.add)}>
                   <img src="/icons/document.svg" alt="add row" />
                 </div>
-                <div className={s.item}>
+                <div className={classNames(s.item, s.delete)}>
                   <img src="/icons/trash.svg" alt="delete row" />
                 </div>
                 {level > 0 && (
