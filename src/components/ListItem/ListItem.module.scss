@@ -1,12 +1,15 @@
 .level {
   position: relative;
-  padding: 3px 7px 3px 4px;
   width: fit-content;
   display: flex;
   align-items: center;
   gap: 6px;
-  border-radius: 6px;
-  background-color: #414144;
+
+  &.active {
+    border-radius: 6px;
+    // padding: 3px 7px 3px 4px;
+    background-color: #414144;
+  }
 
   .item {
     cursor: pointer;
@@ -19,7 +22,13 @@
     z-index: -1;
     position: absolute;
     bottom: 50%;
-    left: -6px;
+    left: -8px;
+
+    &:not(.first) {
+      &::before {
+        height: 61px;
+      }
+    }
 
     &::before,
     &::after {
@@ -34,8 +43,15 @@
     }
 
     &::after {
-      width: 11px;
+      width: 12px;
       height: 1px;
+    }
+
+    &[row-count] {
+      &::before,
+      &::after {
+        background-color: red;
+      }
     }
   }
 }
