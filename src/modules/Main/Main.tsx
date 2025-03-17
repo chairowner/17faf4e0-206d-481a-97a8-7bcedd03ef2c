@@ -1,5 +1,12 @@
 import { FC, useEffect, useState } from 'react';
-import { ListItemCreateType, ListItemType, printList, titleItems } from '../../components/ListItem';
+import {
+  deleteRowQuery,
+  getListQuery,
+  ListItemCreateType,
+  ListItemType,
+  printList,
+  titleItems,
+} from '../../components/ListItem';
 import s from './Main.module.scss';
 
 const Main: FC = () => {
@@ -7,7 +14,24 @@ const Main: FC = () => {
   const [list, setList] = useState<ListItemType[]>([]);
   const [createRow, setCreateRow] = useState<ListItemCreateType | null>(null);
 
+  const changeEditById = (list: ListItemType[], id: number, text?: string): ListItemType[] => {
+    return list.map((item) => {
+      const newItem: ListItemType = {
+        ...item,
+        edit: item.id === id ? !item.edit : false,
+        child: changeEditById(item.child, id),
+      };
+      if (item.id === id && text) newItem.rowName = text;
+      return newItem;
+    });
+  };
+
+  const changeRowEditHandler = (id: number, text?: string) => {
+    setList((list) => changeEditById(list, id, text));
+  };
+
   const changeLevelHovered = (state: boolean): void => setLevelHovered(state);
+
   /* создаётся состояние, нажимается enter, ставим null */
   const changeCreateRow = (state: ListItemCreateType | null): void => setCreateRow(state);
 
@@ -19,18 +43,11 @@ const Main: FC = () => {
 
   const deleteRowHandler = (id: number): void => {
     setList((list) => removeRowById(list, id));
-    fetch(`/api/${id}/delete`, { method: 'DELETE' })
-      .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-        if (json?.status) return;
-      });
+    deleteRowQuery(id).then((res) => console.log(res));
   };
 
   useEffect(() => {
-    fetch('/api/list')
-      .then((res) => res.json())
-      .then((json) => setList(json));
+    getListQuery().then((json) => setList(json));
   }, []);
 
   return (
@@ -45,7 +62,13 @@ const Main: FC = () => {
         </thead>
         <tbody>
           {list?.length > 0 &&
-            printList({ deleteRowHandler, levelHovered, changeLevelHovered, list })}
+            printList({
+              changeRowEditHandler,
+              deleteRowHandler,
+              levelHovered,
+              changeLevelHovered,
+              list,
+            })}
         </tbody>
       </table>
     </main>

@@ -1,6 +1,6 @@
-import { FC, Fragment } from 'react';
+import { FC, Fragment, useState } from 'react';
 import classNames from 'classnames';
-import { ListItemType, TitleItem } from './ListItem.types';
+import { InputValues, ListItemType, TitleItem } from './ListItem.types';
 import s from './ListItem.module.scss';
 
 export const titleItems: TitleItem[] = [
@@ -13,6 +13,7 @@ export const titleItems: TitleItem[] = [
 ];
 
 export interface IListItemProps {
+  changeRowEditHandler(id: number, text?: string): void;
   levelRowIndex: number;
   levelHovered: boolean;
   deleteRowHandler(id: number): void;
@@ -22,6 +23,7 @@ export interface IListItemProps {
 }
 
 interface PrintListProps {
+  changeRowEditHandler(id: number, text?: string): void;
   levelHovered: boolean;
   deleteRowHandler(id: number): void;
   changeLevelHovered(state: boolean): void;
@@ -31,6 +33,7 @@ interface PrintListProps {
 
 export const printList = ({
   levelHovered,
+  changeRowEditHandler,
   deleteRowHandler,
   changeLevelHovered,
   list,
@@ -42,6 +45,7 @@ export const printList = ({
         const props: IListItemProps = {
           levelRowIndex: index,
           levelHovered,
+          changeRowEditHandler,
           deleteRowHandler,
           changeLevelHovered,
           item,
@@ -58,20 +62,50 @@ const ListItem: FC<IListItemProps> = ({
   levelHovered,
   deleteRowHandler,
   changeLevelHovered,
+  changeRowEditHandler,
   item,
   level = 0,
 }) => {
+  const inputValues: InputValues = {
+    level: useState<string>(''),
+    rowName: useState<string>(''),
+    salary: useState<string>(''),
+    equipmentCosts: useState<string>(''),
+    overheads: useState<string>(''),
+    estimatedProfit: useState<string>(''),
+  };
   const hasChild: boolean = item?.child?.length > 0;
   return (
     <Fragment key={item.id}>
-      <tr>
+      <tr
+        onDoubleClick={() => {
+          if (item.edit) return;
+          inputValues.rowName[1](item.rowName);
+          inputValues.salary[1](String(item.salary));
+          inputValues.equipmentCosts[1](String(item.equipmentCosts));
+          inputValues.overheads[1](String(item.overheads));
+          inputValues.estimatedProfit[1](String(item.estimatedProfit));
+          changeRowEditHandler(item.id);
+        }}
+      >
         {titleItems.map((titleItem) => {
           const key: string = item.id + titleItem.key;
-
           if (titleItem.key !== 'level')
             return (
               <td key={key}>
-                <span>{item[titleItem.key]}</span>
+                {item.edit ? (
+                  <input
+                    type={titleItem.key === 'rowName' ? 'text' : 'number'}
+                    value={inputValues[titleItem.key][0]}
+                    onChange={(e) => inputValues[titleItem.key][1](e.target.value)}
+                    onKeyUp={(e) => {
+                      if (e.key === 'Enter')
+                        changeRowEditHandler(item.id, inputValues[titleItem.key][0]);
+                    }}
+                  />
+                ) : (
+                  <span>{item[titleItem.key]}</span>
+                )}
               </td>
             );
 
@@ -106,6 +140,7 @@ const ListItem: FC<IListItemProps> = ({
       </tr>
       {hasChild &&
         printList({
+          changeRowEditHandler,
           levelHovered,
           deleteRowHandler,
           changeLevelHovered,
