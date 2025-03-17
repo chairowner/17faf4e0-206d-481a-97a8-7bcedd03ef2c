@@ -39,7 +39,11 @@ export const updateRowQuery = async (
     estimatedProfit: 0,
   },
 ): Promise<any> =>
-  await fetch(`/api/${id}/update`, { method: 'POST', body: JSON.stringify(data) })
+  await fetch(`/api/${id}/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
     .then((res) => res.json())
     .then((json) => json);
 

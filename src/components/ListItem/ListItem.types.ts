@@ -24,7 +24,7 @@ export type ListItemType = {
   edit?: boolean;
 };
 
-export type ListItemCreateType = Omit<ListItemType, 'id' | 'total' | 'child'> & {
+export type ListItemCreateType = Omit<ListItemType, 'id' | 'total' | 'child' | 'edit'> & {
   parentId: number | null;
 };
 

@@ -27,7 +27,6 @@ const Main: FC = () => {
         edit: item.id === id ? !item.edit : false,
         child: changeEditById(item.child, id),
       };
-      console.log(text);
       if (item.id === id && text && titleItemKey) {
         if (titleItemKey === 'rowName') newItem[titleItemKey] = text;
         if (titleItemKey === 'salary') newItem[titleItemKey] = Number(text);
@@ -56,7 +55,7 @@ const Main: FC = () => {
 
   const deleteRowHandler = (id: number): void => {
     setList((list) => removeRowById(list, id));
-    deleteRowQuery(id).then((res) => console.log(res));
+    deleteRowQuery(id);
   };
 
   useEffect(() => {

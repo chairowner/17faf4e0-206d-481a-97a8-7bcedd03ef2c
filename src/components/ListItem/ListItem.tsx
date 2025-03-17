@@ -1,7 +1,14 @@
 import { FC, Fragment, useState } from 'react';
 import classNames from 'classnames';
-import { IListItemProps, InputValues, PrintListProps, TitleItem } from './ListItem.types';
+import {
+  IListItemProps,
+  InputValues,
+  ListItemUpdateType,
+  PrintListProps,
+  TitleItem,
+} from './ListItem.types';
 import s from './ListItem.module.scss';
+import { updateRowQuery } from './ListItem.service';
 
 export const titleItems: TitleItem[] = [
   { key: 'level', title: 'Уровень' },
@@ -84,6 +91,19 @@ const ListItem: FC<IListItemProps> = ({
                       e.preventDefault();
                       if (e.key !== 'Enter') return;
                       changeRowEditHandler(item.id, inputValues[titleItem.key][0], titleItem.key);
+                      const data: ListItemUpdateType = {
+                        rowName: inputValues['rowName'][0],
+                        salary: Number(inputValues['salary'][0]),
+                        equipmentCosts: Number(inputValues['equipmentCosts'][0]),
+                        overheads: Number(inputValues['overheads'][0]),
+                        estimatedProfit: Number(inputValues['estimatedProfit'][0]),
+                        mimExploitation: item.mimExploitation,
+                        machineOperatorSalary: item.machineOperatorSalary,
+                        materials: item.materials,
+                        mainCosts: item.mainCosts,
+                        supportCosts: item.supportCosts,
+                      };
+                      updateRowQuery(item.id, data).then((res) => console.log(res));
                     }}
                   />
                 ) : (
