@@ -36,6 +36,14 @@
       letter-spacing: 0.1px;
     }
 
+    thead {
+      tr {
+        th:nth-child(1) {
+          width: 110px;
+        }
+      }
+    }
+
     tbody {
       tr {
         td:nth-child(1) {

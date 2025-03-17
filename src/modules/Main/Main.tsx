@@ -5,6 +5,7 @@ import {
   ListItemCreateType,
   ListItemType,
   printList,
+  Title,
   titleItems,
 } from '../../components/ListItem';
 import s from './Main.module.scss';
@@ -14,20 +15,32 @@ const Main: FC = () => {
   const [list, setList] = useState<ListItemType[]>([]);
   const [createRow, setCreateRow] = useState<ListItemCreateType | null>(null);
 
-  const changeEditById = (list: ListItemType[], id: number, text?: string): ListItemType[] => {
+  const changeEditById = (
+    list: ListItemType[],
+    id: number,
+    text?: string,
+    titleItemKey?: string,
+  ): ListItemType[] => {
     return list.map((item) => {
       const newItem: ListItemType = {
         ...item,
         edit: item.id === id ? !item.edit : false,
         child: changeEditById(item.child, id),
       };
-      if (item.id === id && text) newItem.rowName = text;
+      console.log(text);
+      if (item.id === id && text && titleItemKey) {
+        if (titleItemKey === 'rowName') newItem[titleItemKey] = text;
+        if (titleItemKey === 'salary') newItem[titleItemKey] = Number(text);
+        if (titleItemKey === 'equipmentCosts') newItem[titleItemKey] = Number(text);
+        if (titleItemKey === 'overheads') newItem[titleItemKey] = Number(text);
+        if (titleItemKey === 'estimatedProfit') newItem[titleItemKey] = Number(text);
+      }
       return newItem;
     });
   };
 
-  const changeRowEditHandler = (id: number, text?: string) => {
-    setList((list) => changeEditById(list, id, text));
+  const changeRowEditHandler = (id: number, text?: string, titleItemKey?: keyof ListItemType) => {
+    setList((list) => changeEditById(list, id, text, titleItemKey));
   };
 
   const changeLevelHovered = (state: boolean): void => setLevelHovered(state);

@@ -1,6 +1,6 @@
 import { FC, Fragment, useState } from 'react';
 import classNames from 'classnames';
-import { InputValues, ListItemType, TitleItem } from './ListItem.types';
+import { IListItemProps, InputValues, PrintListProps, TitleItem } from './ListItem.types';
 import s from './ListItem.module.scss';
 
 export const titleItems: TitleItem[] = [
@@ -11,25 +11,6 @@ export const titleItems: TitleItem[] = [
   { key: 'overheads', title: 'Накладные расходы' },
   { key: 'estimatedProfit', title: 'Сметная прибыль' },
 ];
-
-export interface IListItemProps {
-  changeRowEditHandler(id: number, text?: string): void;
-  levelRowIndex: number;
-  levelHovered: boolean;
-  deleteRowHandler(id: number): void;
-  changeLevelHovered(state: boolean): void;
-  item: ListItemType;
-  level?: number;
-}
-
-interface PrintListProps {
-  changeRowEditHandler(id: number, text?: string): void;
-  levelHovered: boolean;
-  deleteRowHandler(id: number): void;
-  changeLevelHovered(state: boolean): void;
-  list: ListItemType[];
-  level?: number;
-}
 
 export const printList = ({
   levelHovered,
@@ -90,7 +71,8 @@ const ListItem: FC<IListItemProps> = ({
       >
         {titleItems.map((titleItem) => {
           const key: string = item.id + titleItem.key;
-          if (titleItem.key !== 'level')
+
+          if (titleItem.key !== 'level') {
             return (
               <td key={key}>
                 {item.edit ? (
@@ -99,8 +81,9 @@ const ListItem: FC<IListItemProps> = ({
                     value={inputValues[titleItem.key][0]}
                     onChange={(e) => inputValues[titleItem.key][1](e.target.value)}
                     onKeyUp={(e) => {
-                      if (e.key === 'Enter')
-                        changeRowEditHandler(item.id, inputValues[titleItem.key][0]);
+                      e.preventDefault();
+                      if (e.key !== 'Enter') return;
+                      changeRowEditHandler(item.id, inputValues[titleItem.key][0], titleItem.key);
                     }}
                   />
                 ) : (
@@ -108,6 +91,7 @@ const ListItem: FC<IListItemProps> = ({
                 )}
               </td>
             );
+          }
 
           /* level */
           return (
