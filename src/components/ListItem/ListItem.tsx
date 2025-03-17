@@ -15,6 +15,7 @@ export const titleItems: TitleItem[] = [
 export interface IListItemProps {
   levelRowIndex: number;
   levelHovered: boolean;
+  deleteRowHandler(id: number): void;
   changeLevelHovered(state: boolean): void;
   item: ListItemType;
   level?: number;
@@ -22,6 +23,7 @@ export interface IListItemProps {
 
 interface PrintListProps {
   levelHovered: boolean;
+  deleteRowHandler(id: number): void;
   changeLevelHovered(state: boolean): void;
   list: ListItemType[];
   level?: number;
@@ -29,6 +31,7 @@ interface PrintListProps {
 
 export const printList = ({
   levelHovered,
+  deleteRowHandler,
   changeLevelHovered,
   list,
   level = 0,
@@ -39,6 +42,7 @@ export const printList = ({
         const props: IListItemProps = {
           levelRowIndex: index,
           levelHovered,
+          deleteRowHandler,
           changeLevelHovered,
           item,
           level,
@@ -52,6 +56,7 @@ export const printList = ({
 const ListItem: FC<IListItemProps> = ({
   levelRowIndex,
   levelHovered,
+  deleteRowHandler,
   changeLevelHovered,
   item,
   level = 0,
@@ -79,10 +84,16 @@ const ListItem: FC<IListItemProps> = ({
               style={level > 0 ? { paddingLeft: `${level * 32}px` } : {}}
             >
               <div className={classNames(s.level, levelHovered && s.hovered)}>
-                <div className={classNames(s.item, s.add)}>
+                <div
+                  className={classNames(s.item, s.add)}
+                  onClick={() => console.log('try to add')}
+                >
                   <img src="/icons/document.svg" alt="add row" />
                 </div>
-                <div className={classNames(s.item, s.delete)}>
+                <div
+                  className={classNames(s.item, s.delete)}
+                  onClick={() => deleteRowHandler(item.id)}
+                >
                   <img src="/icons/trash.svg" alt="delete row" />
                 </div>
                 {level > 0 && (
@@ -96,6 +107,7 @@ const ListItem: FC<IListItemProps> = ({
       {hasChild &&
         printList({
           levelHovered,
+          deleteRowHandler,
           changeLevelHovered,
           list: item.child,
           level: level + 1,

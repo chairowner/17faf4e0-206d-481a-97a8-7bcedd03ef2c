@@ -19,11 +19,14 @@
 
     th {
       color: #a1a1aa;
+      height: 40px;
+    }
+    td {
+      height: 60px;
     }
 
     th,
     td {
-      height: 60px;
       text-align: start;
       padding: 12px;
       font-family: Roboto;

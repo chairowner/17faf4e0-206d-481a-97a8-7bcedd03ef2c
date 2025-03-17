@@ -22,3 +22,7 @@ export type ListItemType = {
   estimatedProfit: number;
   child: ListItemType[];
 };
+
+export type ListItemCreateType = Omit<ListItemType, 'id' | 'total' | 'child'> & {
+  parentId: number | null;
+};
