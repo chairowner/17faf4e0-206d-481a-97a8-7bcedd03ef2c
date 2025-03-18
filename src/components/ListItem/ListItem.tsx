@@ -84,13 +84,16 @@ const ListItem: FC<IListItemProps> = ({
               <td key={key}>
                 {item.edit ? (
                   <input
+                    className={s.input}
                     type={titleItem.key === 'rowName' ? 'text' : 'number'}
+                    step={titleItem.key === 'rowName' ? undefined : 0.01}
                     value={inputValues[titleItem.key][0]}
                     onChange={(e) => inputValues[titleItem.key][1](e.target.value)}
                     onKeyUp={(e) => {
                       e.preventDefault();
+                      if (e.key === 'Escape') return changeRowEditHandler(item.id);
                       if (e.key !== 'Enter') return;
-                      changeRowEditHandler(item.id, inputValues[titleItem.key][0], titleItem.key);
+                      changeRowEditHandler(item.id, inputValues);
                       const data: ListItemUpdateType = {
                         rowName: inputValues['rowName'][0],
                         salary: Number(inputValues['salary'][0]),
@@ -107,7 +110,7 @@ const ListItem: FC<IListItemProps> = ({
                     }}
                   />
                 ) : (
-                  <span>{item[titleItem.key]}</span>
+                  <span>{item[titleItem.key].toLocaleString('ru-RU')}</span>
                 )}
               </td>
             );
@@ -124,13 +127,19 @@ const ListItem: FC<IListItemProps> = ({
               <div className={classNames(s.level, levelHovered && s.hovered)}>
                 <div
                   className={classNames(s.item, s.add)}
-                  onClick={() => console.log('try to add')}
+                  onClick={() => {
+                    if (item.id === 117453) return;
+                    console.log('try to add');
+                  }}
                 >
                   <img src="/icons/document.svg" alt="add row" />
                 </div>
                 <div
                   className={classNames(s.item, s.delete)}
-                  onClick={() => deleteRowHandler(item.id)}
+                  onClick={() => {
+                    if (item.id === 117453) return;
+                    deleteRowHandler(item.id);
+                  }}
                 >
                   <img src="/icons/trash.svg" alt="delete row" />
                 </div>

@@ -40,7 +40,7 @@ export type InputValues = {
 };
 
 export interface IListItemProps {
-  changeRowEditHandler(id: number, text?: string, titleItemKey?: string): void;
+  changeRowEditHandler(id: number, values?: InputValues): void;
   levelRowIndex: number;
   levelHovered: boolean;
   deleteRowHandler(id: number): void;
@@ -50,7 +50,7 @@ export interface IListItemProps {
 }
 
 export interface PrintListProps {
-  changeRowEditHandler(id: number, text?: string, titleItemKey?: string): void;
+  changeRowEditHandler(id: number, values?: InputValues): void;
   levelHovered: boolean;
   deleteRowHandler(id: number): void;
   changeLevelHovered(state: boolean): void;
