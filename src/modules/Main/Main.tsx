@@ -127,7 +127,7 @@ const Main: FC = () => {
 
   const deleteRowHandler = (id: number, query: boolean): void => {
     setList((list) => removeRowById(list, id));
-    if (query) deleteRowQuery(id);
+    if (query) deleteRowQuery(id); //a
   };
 
   const updateList = (list: ListItemType[], changed: ListItemType[]): ListItemType[] =>
