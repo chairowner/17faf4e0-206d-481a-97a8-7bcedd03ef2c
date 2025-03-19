@@ -26,6 +26,11 @@ export type ListItemType = {
 
 export type ListItemCreateType = Omit<ListItemType, 'id' | 'total' | 'child' | 'edit'> & {
   parentId: number | null;
+  send?: boolean;
+};
+export type ListItemCreateTemp = {
+  tempId: number;
+  payload: ListItemCreateType;
 };
 
 export type ListItemUpdateType = Omit<ListItemCreateType, 'parentId'>;
@@ -39,21 +44,24 @@ export type InputValues = {
   estimatedProfit: [string, React.Dispatch<React.SetStateAction<string>>];
 };
 
-export interface IListItemProps {
-  changeRowEditHandler(id: number, values?: InputValues): void;
-  levelRowIndex: number;
+type ListItemPropsMain = {
+  updateListData(changed: ListItemType[]): void;
+  inputValues: InputValues;
+  createMode: ListItemCreateTemp | null;
+  editMode: boolean;
+  addEditRowHandler(parentId: number | null): void;
+  changeRowEditHandler(id: number, mode: boolean, values?: InputValues): void;
   levelHovered: boolean;
-  deleteRowHandler(id: number): void;
+  deleteRowHandler(id: number, query: boolean): void;
   changeLevelHovered(state: boolean): void;
-  item: ListItemType;
   level?: number;
-}
+};
 
-export interface PrintListProps {
-  changeRowEditHandler(id: number, values?: InputValues): void;
-  levelHovered: boolean;
-  deleteRowHandler(id: number): void;
-  changeLevelHovered(state: boolean): void;
+export type IListItemProps = ListItemPropsMain & {
+  levelRowIndex: number;
+  item: ListItemType;
+};
+
+export type PrintListProps = ListItemPropsMain & {
   list: ListItemType[];
-  level?: number;
-}
+};

@@ -3,26 +3,55 @@ import {
   deleteRowQuery,
   getListQuery,
   InputValues,
+  ListItemCreateTemp,
   ListItemType,
   printList,
   titleItems,
 } from '../../components/ListItem';
 import s from './Main.module.scss';
 
+const defaultNewRow: ListItemCreateTemp = {
+  tempId: 0,
+  payload: {
+    rowName: '',
+    salary: 0,
+    mimExploitation: 0,
+    machineOperatorSalary: 0,
+    materials: 0,
+    mainCosts: 0,
+    supportCosts: 0,
+    equipmentCosts: 0,
+    overheads: 0,
+    estimatedProfit: 0,
+    parentId: null,
+  },
+};
+
 const Main: FC = () => {
-  const [levelHovered, setLevelHovered] = useState<boolean>(false);
   const [list, setList] = useState<ListItemType[]>([]);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [createMode, setCreateMode] = useState<ListItemCreateTemp | null>(null);
+  const [levelHovered, setLevelHovered] = useState<boolean>(false);
+  const inputValues: InputValues = {
+    level: useState<string>(''),
+    rowName: useState<string>(''),
+    salary: useState<string>(''),
+    equipmentCosts: useState<string>(''),
+    overheads: useState<string>(''),
+    estimatedProfit: useState<string>(''),
+  };
 
   const changeEditById = (
     list: ListItemType[],
     id: number,
+    mode: boolean,
     values?: InputValues,
-  ): ListItemType[] => {
-    return list.map((item) => {
+  ): ListItemType[] =>
+    list.map((item) => {
       const newItem: ListItemType = {
         ...item,
-        edit: item.id === id ? !item.edit : false,
-        child: changeEditById(item.child, id, values),
+        edit: item.id === id ? mode : false,
+        child: changeEditById(item.child, id, mode, values),
       };
       if (item.id === id && values) {
         newItem.rowName = values.rowName[0];
@@ -33,13 +62,62 @@ const Main: FC = () => {
       }
       return newItem;
     });
-  };
 
-  const changeRowEditHandler = (id: number, values: InputValues) => {
-    setList((list) => changeEditById(list, id, values));
+  const changeRowEditHandler = (id: number, mode: boolean, values?: InputValues) => {
+    setList((list) => changeEditById(list, id, mode, values));
+    setEditMode(mode);
   };
 
   const changeLevelHovered = (state: boolean): void => setLevelHovered(state);
+
+  const addEditRowByParentId = (
+    list: ListItemType[],
+    parentId: number | null = null,
+  ): ListItemType[] => {
+    const tempId: number = new Date().getTime();
+    const newRow: ListItemCreateTemp = { ...defaultNewRow, tempId };
+    newRow.payload.parentId = parentId;
+    const newList: ListItemType[] = list.map((item) => {
+      if (item.id === parentId)
+        return {
+          ...item,
+          child: [
+            ...item.child,
+            {
+              id: tempId,
+              rowName: newRow.payload.rowName,
+              total: 0,
+              salary: newRow.payload.salary,
+              mimExploitation: newRow.payload.mimExploitation,
+              machineOperatorSalary: newRow.payload.machineOperatorSalary,
+              materials: newRow.payload.materials,
+              mainCosts: newRow.payload.mainCosts,
+              supportCosts: newRow.payload.supportCosts,
+              equipmentCosts: newRow.payload.equipmentCosts,
+              overheads: newRow.payload.overheads,
+              estimatedProfit: newRow.payload.estimatedProfit,
+              child: [],
+            },
+          ],
+        };
+      return {
+        ...item,
+        child: addEditRowByParentId(item.child, parentId),
+      };
+    });
+    setCreateMode(newRow);
+    inputValues.level[1]('0');
+    inputValues.rowName[1](String(newRow.payload.rowName));
+    inputValues.salary[1](String(newRow.payload.salary));
+    inputValues.equipmentCosts[1](String(newRow.payload.equipmentCosts));
+    inputValues.overheads[1](String(newRow.payload.overheads));
+    inputValues.estimatedProfit[1](String(newRow.payload.estimatedProfit));
+    return newList;
+  };
+
+  const addEditRowHandler = (parentId: number | null = null) => {
+    setList((list) => addEditRowByParentId(list, parentId));
+  };
 
   const removeRowById = (list: ListItemType[], id: number): ListItemType[] => {
     return list
@@ -47,14 +125,42 @@ const Main: FC = () => {
       .map((item) => ({ ...item, child: removeRowById(item.child, id) }));
   };
 
-  const deleteRowHandler = (id: number): void => {
+  const deleteRowHandler = (id: number, query: boolean): void => {
     setList((list) => removeRowById(list, id));
-    deleteRowQuery(id);
+    if (query) deleteRowQuery(id);
+  };
+
+  const updateList = (list: ListItemType[], changed: ListItemType[]): ListItemType[] =>
+    list.map((item) => {
+      const newItem: ListItemType = {
+        ...item,
+        child: updateList(item.child, changed),
+      };
+      changed.map((changedItem) => {
+        if (changedItem.id !== item.id) return;
+        newItem.rowName = changedItem.rowName;
+        newItem.salary = changedItem.salary;
+        newItem.equipmentCosts = changedItem.equipmentCosts;
+        newItem.overheads = changedItem.overheads;
+        newItem.estimatedProfit = changedItem.estimatedProfit;
+      });
+      return newItem;
+    });
+
+  const updateListData = (changed: ListItemType[]): void => {
+    console.log('updateListData', changed);
+    setList((list) => updateList(list, changed));
   };
 
   useEffect(() => {
-    getListQuery().then((json) => setList(json));
+    getListQuery().then((json: ListItemType[]) => setList(json));
   }, []);
+
+  useEffect(() => {
+    console.log({ createMode });
+    if (!createMode) return;
+    changeRowEditHandler(createMode.tempId, true, inputValues);
+  }, [createMode]);
 
   return (
     <main className={s.main}>
@@ -69,6 +175,11 @@ const Main: FC = () => {
         <tbody>
           {list?.length > 0 &&
             printList({
+              updateListData,
+              createMode,
+              inputValues,
+              editMode,
+              addEditRowHandler,
               changeRowEditHandler,
               deleteRowHandler,
               levelHovered,

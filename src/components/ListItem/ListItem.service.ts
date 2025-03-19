@@ -5,7 +5,6 @@ export const getListQuery = async (): Promise<ListItemType[]> =>
   await fetch('/api/list').then((res) => res.json());
 
 export const createRowQuery = async (
-  id: number,
   data: ListItemCreateType = {
     parentId: null,
     rowName: '',
@@ -20,7 +19,11 @@ export const createRowQuery = async (
     estimatedProfit: 0,
   },
 ): Promise<any> =>
-  await fetch(`/api/${id}/create`, { method: 'POST', body: JSON.stringify(data) })
+  await fetch(`/api/create`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
     .then((res) => res.json())
     .then((json) => json);
 
